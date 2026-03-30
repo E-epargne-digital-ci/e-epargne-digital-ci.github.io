@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>E-épargne Admin — Dashboard Concepteur</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g1:#0D4A1A; --g2:#1B6B2F; --g3:#27892F; --g4:#33A83A;
+  --glt:#E8F5E9; --gbg:#F4F9F4;
+  --or:#E07B12; --or2:#F49019; --orlt:#FFF3E0;
+  --gd:#F5C518; --gd2:#FFD740;
+  --blue:#1565C0; --bluelt:#E3F2FD;
+  --teal:#00695C; --teallt:#E0F2F1;
+  --red:#C62828; --redlt:#FFEBEE;
+  --white:#fff; --sidebar:#0D1F0F; --sidebarbg:#111E12;
+  --text:#1A2E1A; --text2:#4A6B4A; --border:#D8EDD8;
+  --card-shadow:0 2px 12px rgba(27,107,47,0.08);
+}
+html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--gbg);color:var(--text)}
+
+/* ── LAYOUT ── */
+.admin-layout{display:flex;height:100vh;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{width:250px;background:var(--sidebar);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto}
+.sb-logo{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-logo-inner{display:flex;align-items:center;gap:10px}
+.sb-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--g2),var(--g4));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.sb-logo-text{font-family:'Poppins',sans-serif;font-weight:800;font-size:16px;color:white}
+.sb-logo-sub{font-size:9px;color:rgba(255,255,255,.45);font-weight:700;letter-spacing:.8px;margin-top:1px}
+.sb-badge{background:var(--gd);color:var(--g1);font-size:9px;font-weight:800;padding:2px 7px;border-radius:6px;margin-top:6px;display:inline-block}
+.sb-section{padding:16px 12px 4px;font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px}
+.sb-item{display:flex;align-items:center;gap:12px;padding:10px 16px;border-radius:10px;margin:2px 8px;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.65);font-weight:600;font-size:13px;border:none;background:none;width:calc(100% - 16px);text-align:left;font-family:'Nunito',sans-serif}
+.sb-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.9)}
+.sb-item.active{background:rgba(39,137,47,.25);color:white}
+.sb-item .sb-ic{font-size:18px;width:24px;text-align:center;flex-shrink:0}
+.sb-item .sb-badge-ct{margin-left:auto;background:var(--g3);color:white;font-size:10px;font-weight:800;padding:1px 7px;border-radius:8px}
+.sb-bottom{margin-top:auto;padding:16px 8px;border-top:1px solid rgba(255,255,255,.07)}
+
+/* ── MAIN ── */
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+
+/* ── TOPBAR ── */
+.topbar{background:white;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.page-title{font-family:'Poppins',sans-serif;font-weight:800;font-size:18px;color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.tb-btn{background:var(--gbg);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;transition:all .2s}
+.tb-btn:hover{background:var(--glt);border-color:var(--g3);color:var(--g2)}
+.tb-btn.primary{background:var(--g2);color:white;border:none;box-shadow:0 4px 12px rgba(39,137,47,.3)}
+.tb-btn.primary:hover{background:var(--g1)}
+.tb-notif{position:relative;width:36px;height:36px;background:var(--gbg);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--border)}
+.tb-notif-dot{position:absolute;top:6px;right:7px;width:8px;height:8px;background:var(--red);border-radius:50%;border:2px solid white}
+.tb-avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--g2),var(--g4));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:white;cursor:pointer}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--gbg);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:13px;color:var(--text2)}
+.search-box input{border:none;background:none;outline:none;font-family:'Nunito',sans-serif;font-size:13px;width:200px;color:var(--text)}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:24px 28px}
+
+/* ── STAT CARDS ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:white;border-radius:16px;padding:20px;border:1px solid var(--border);box-shadow:var(--card-shadow);position:relative;overflow:hidden;transition:all .25s}
+.stat-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(27,107,47,.12)}
+.stat-card::after{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--g3)}
+.stat-card.orange::after{background:var(--or)}
+.stat-card.blue::after{background:var(--blue)}
+.stat-card.gold::after{background:var(--gd)}
+.stat-card.red::after{background:var(--red)}
+.stat-card.teal::after{background:var(--teal)}
+.sc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.sc-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.sc-icon.green{background:var(--glt)}
+.sc-icon.orange{background:var(--orlt)}
+.sc-icon.blue{background:var(--bluelt)}
+.sc-icon.gold{background:#FFF9C4}
+.sc-icon.red{background:var(--redlt)}
+.sc-icon.teal{background:var(--teallt)}
+.sc-trend{font-size:11px;font-weight:700;display:flex;align-items:center;gap:3px}
+.sc-trend.up{color:var(--g3)}
+.sc-trend.dn{color:var(--red)}
+.sc-val{font-family:'Poppins',sans-serif;font-weight:900;font-size:26px;color:var(--text);line-height:1;margin-bottom:4px}
+.sc-label{font-size:12px;color:var(--text2);font-weight:600}
+.sc-sub{font-size:11px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px solid var(--gbg)}
+
+/* ── CHARTS ROW ── */
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px}
+.card{background:white;border-radius:16px;padding:20px;border:1px solid var(--border);box-shadow:var(--card-shadow)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;color:var(--text)}
+.card-actions{display:flex;gap:6px}
+.chip{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:none;background:var(--gbg);color:var(--text2);font-family:'Nunito',sans-serif}
+.chip.active{background:var(--g2);color:white}
+
+/* ── BAR CHART ── */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:150px;margin-bottom:8px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:6px 6px 0 0;transition:height .6s;cursor:pointer;position:relative}
+.bar:hover::after{content:attr(data-val);position:absolute;bottom:calc(100%+4px);left:50%;transform:translateX(-50%);background:var(--text);color:white;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;white-space:nowrap}
+.bar.g{background:linear-gradient(180deg,var(--g3),var(--g2))}
+.bar.o{background:linear-gradient(180deg,var(--or2),var(--or))}
+.bar-label{font-size:10px;color:var(--text2);font-weight:700}
+
+/* ── DONUT CHART ── */
+.donut-wrap{display:flex;align-items:center;gap:20px}
+.donut-svg{width:120px;height:120px;flex-shrink:0}
+.donut-legend{flex:1}
+.donut-item{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.donut-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.donut-lbl{font-size:12px;color:var(--text2);flex:1}
+.donut-pct{font-weight:700;font-size:13px;color:var(--text)}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--gbg);background:var(--gbg)}
+thead th:first-child{border-radius:10px 0 0 0}
+thead th:last-child{border-radius:0 10px 0 0}
+tbody tr{border-bottom:1px solid var(--gbg);transition:background .15s;cursor:pointer}
+tbody tr:hover{background:var(--gbg)}
+tbody td{padding:12px 14px;font-size:13px;vertical-align:middle}
+.td-bold{font-weight:700;color:var(--text)}
+.td-muted{color:var(--text2);font-size:12px}
+.status-pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;display:inline-block}
+.sp-green{background:var(--glt);color:var(--g2)}
+.sp-amber{background:var(--orlt);color:var(--or)}
+.sp-red{background:var(--redlt);color:var(--red)}
+.sp-blue{background:var(--bluelt);color:var(--blue)}
+.td-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--g2),var(--g4));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:white;flex-shrink:0}
+
+/* ── TWO COL ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
+
+/* ── ACTIVITY FEED ── */
+.feed-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--gbg)}
+.feed-item:last-child{border-bottom:none}
+.feed-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.feed-dot.g{background:var(--g3)}
+.feed-dot.o{background:var(--or)}
+.feed-dot.b{background:var(--blue)}
+.feed-dot.r{background:var(--red)}
+.feed-text{font-size:13px;line-height:1.4;flex:1}
+.feed-time{font-size:11px;color:var(--text2);flex-shrink:0}
+
+/* ── KPI ROW ── */
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.kpi{background:white;border-radius:12px;padding:16px 18px;border:1px solid var(--border);display:flex;align-items:center;gap:14px}
+.kpi-ic{font-size:28px}
+.kpi-val{font-family:'Poppins',sans-serif;font-weight:800;font-size:22px;color:var(--text);line-height:1}
+.kpi-lbl{font-size:11px;color:var(--text2);margin-top:3px}
+
+/* ── MEMBER CARD ── */
+.member-card{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--gbg)}
+.member-card:last-child{border-bottom:none}
+.mc-av{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--g2),var(--g4));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:white;flex-shrink:0}
+.mc-info{flex:1}
+.mc-name{font-weight:700;font-size:13px}
+.mc-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.mc-amount{text-align:right}
+.mc-val{font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;color:var(--g2)}
+.mc-date{font-size:11px;color:var(--text2)}
+
+/* ── BTN ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:10px;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;transition:all .2s}
+.btn-green{background:var(--g2);color:white;box-shadow:0 3px 10px rgba(39,137,47,.3)}
+.btn-green:hover{background:var(--g1)}
+.btn-or{background:var(--or);color:white}
+.btn-grey{background:var(--gbg);color:var(--text);border:1px solid var(--border)}
+.btn-red{background:var(--redlt);color:var(--red)}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:8px}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--gbg);border-radius:12px;padding:4px}
+.tab{padding:9px 18px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;color:var(--text2);border:none;background:none;transition:all .2s;font-family:'Nunito',sans-serif}
+.tab.active{background:white;color:var(--g2);box-shadow:0 2px 8px rgba(0,0,0,.07)}
+
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.fg input, .fg select, .fg textarea{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .2s;background:white}
+.fg input:focus, .fg select:focus{border-color:var(--g3);box-shadow:0 0 0 3px rgba(39,137,47,.1)}
+.fg select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%234A6B4A' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+
+/* ── NOTIF BOX ── */
+.notif-box{background:var(--glt);border:1px solid var(--g4);border-radius:12px;padding:14px 18px;display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.notif-box.warn{background:var(--orlt);border-color:var(--or2)}
+.notif-box.err{background:var(--redlt);border-color:var(--red)}
+
+/* ── LOADING ── */
+.spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(39,137,47,.2);border-top-color:var(--g2);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── TOAST ── */
+.toast{position:fixed;top:20px;right:20px;z-index:500;background:var(--g1);color:white;padding:13px 22px;border-radius:12px;font-weight:700;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.2);animation:slideLeft .3s;max-width:340px}
+.toast.err{background:var(--red)}
+@keyframes slideLeft{from{transform:translateX(50px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* UTILS */
+.flex{display:flex}.items-c{align-items:center}.jc-sb{justify-content:space-between}.gap8{gap:8px}.gap12{gap:12px}.fw7{font-weight:700}.fw8{font-weight:800}.text-g{color:var(--g2)}.text-or{color:var(--or)}.text-muted{color:var(--text2)}.text-sm{font-size:12px}.poppins{font-family:'Poppins',sans-serif}.mb8{margin-bottom:8px}.mb16{margin-bottom:16px}.mb24{margin-bottom:24px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+const API = "https://eepargne-backend.onrender.com/api";
+
+// ── TOKEN ──
+const T = {
+  get: () => localStorage.getItem("ep_admin_t"),
+  set: v => localStorage.setItem("ep_admin_t", v),
+  setR: v => localStorage.setItem("ep_admin_r", v),
+  getR: () => localStorage.getItem("ep_admin_r"),
+  clear: () => ["ep_admin_t","ep_admin_r","ep_admin_u"].forEach(k => localStorage.removeItem(k)),
+  setU: u => localStorage.setItem("ep_admin_u", JSON.stringify(u)),
+  getU: () => { try { return JSON.parse(localStorage.getItem("ep_admin_u")); } catch { return null; } },
+};
+
+async function api(url, opts = {}) {
+  const tok = T.get();
+  const cfg = { headers: { "Content-Type":"application/json", ...(tok?{Authorization:`Bearer ${tok}`}:{}), ...opts.headers }, ...opts };
+  let r = await fetch(`${API}${url}`, cfg);
+  if (r.status === 401 && T.getR()) {
+    const rr = await fetch(`${API}/auth/refresh`, { method:"POST", headers:{"Content-Type":"application/json", Authorization:`Bearer ${T.getR()}`} });
+    if (rr.ok) { const d = await rr.json(); T.set(d.access_token); cfg.headers.Authorization=`Bearer ${d.access_token}`; r = await fetch(`${API}${url}`, cfg); }
+    else { T.clear(); window.location.reload(); return; }
+  }
+  const ct = r.headers.get("content-type")||"";
+  if (ct.includes("text/csv")) return r.blob();
+  const data = await r.json().catch(()=>({}));
+  if (!r.ok) throw new Error(data.erreur || `Erreur ${r.status}`);
+  return data;
+}
+
+function useAPI(fn, deps=[]) {
+  const [data,setData]=useState(null), [loading,setLoading]=useState(true), [error,setError]=useState(null);
+  const run = useCallback(async()=>{ setLoading(true); setError(null); try{setData(await fn())}catch(e){setError(e.message)} finally{setLoading(false)}}, deps);
+  useEffect(()=>{run()},[run]);
+  return {data,loading,error,refetch:run};
+}
+
+function useToast() {
+  const [t,setT]=useState(null);
+  const show=(msg,type="ok")=>{setT({msg,type});setTimeout(()=>setT(null),3500)};
+  const comp=t?<div className={`toast${t.type==="err"?" err":""}`}>{t.msg}</div>:null;
+  return {show,comp};
+}
+
+// ── SIDEBAR ITEMS ──
+const NAV = [
+  {section:"Tableau de bord", items:[
+    {k:"dashboard",ic:"📊",l:"Vue générale"},
+    {k:"analytics",ic:"📈",l:"Analyses & Rapports"},
+  ]},
+  {section:"Gestion", items:[
+    {k:"membres",ic:"👥",l:"Membres",badge:""},
+    {k:"groupes",ic:"🏘️",l:"Groupes"},
+    {k:"paiements",ic:"💳",l:"Paiements"},
+    {k:"prets",ic:"🏦",l:"Prêts"},
+  ]},
+  {section:"Parrainage", items:[
+    {k:"parrainage",ic:"🎁",l:"Parrainages & Bonus"},
+  ]},
+  {section:"Paramètres", items:[
+    {k:"notifications",ic:"🔔",l:"Notifications"},
+    {k:"config",ic:"⚙️",l:"Configuration"},
+  ]},
+];
+
+// ── CHARTS (SVG custom) ──
+function BarChart({data, maxH=150}) {
+  if (!data || data.length === 0) return <div style={{height:maxH,display:"flex",alignItems:"center",justifyContent:"center",color:"var(--text2)"}}>Chargement...</div>;
+  const max = Math.max(...data.map(d=>d.val), 1);
+  return (
+    <div>
+      <div className="bar-chart">
+        {data.map((d,i) => (
+          <div key={i} className="bar-wrap">
+            <div className={`bar ${d.color||"g"}`} data-val={d.val?.toLocaleString("fr-FR")+" F"} style={{height:`${Math.max((d.val/max)*maxH, 6)}px`}}/>
+            <div className="bar-label">{d.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function LineChart({data, color="var(--g2)", h=120}) {
+  if (!data || data.length < 2) return null;
+  const W=400, H=h, pad=10;
+  const max=Math.max(...data, 1), min=Math.min(...data);
+  const pts=data.map((v,i) => {
+    const x=pad+(i/(data.length-1))*(W-pad*2);
+    const y=H-pad-((v-min)/(max-min||1))*(H-pad*2);
+    return `${x},${y}`;
+  });
+  const path="M"+pts.join(" L");
+  const area=path+` L${W-pad},${H} L${pad},${H} Z`;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",height:h,overflow:"visible"}}>
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={color} stopOpacity="0.25"/><stop offset="100%" stopColor={color} stopOpacity="0.02"/></linearGradient></defs>
+      <path d={area} fill="url(#lg)"/>
+      <path d={path} fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+      {pts.slice(-1).map(p=>{ const [x,y]=p.split(","); return <circle key="e" cx={x} cy={y} r="5" fill={color} stroke="white" strokeWidth="2"/>; })}
+    </svg>
+  );
+}
+
+function DonutChart({data}) {
+  const total = data.reduce((s,d)=>s+d.val, 0)||1;
+  let offset = 0;
+  const r = 40, cx = 50, cy = 50, circ = 2*Math.PI*r;
+  const segments = data.map(d => {
+    const pct = d.val/total;
+    const seg = { ...d, pct, dasharray:`${pct*circ} ${circ}`, dashoffset: -offset*circ };
+    offset += pct;
+    return seg;
+  });
+  return (
+    <div className="donut-wrap">
+      <svg className="donut-svg" viewBox="0 0 100 100">
+        {segments.map((s,i) => <circle key={i} cx={cx} cy={cy} r={r} fill="none" stroke={s.color} strokeWidth="18" strokeDasharray={s.dasharray} strokeDashoffset={s.dashoffset} transform="rotate(-90 50 50)"/>)}
+        <circle cx={cx} cy={cy} r={28} fill="white"/>
+        <text x={cx} y={cy-4} textAnchor="middle" fontSize="9" fontWeight="800" fill="var(--text)">{Math.round(segments[0]?.pct*100)||0}%</text>
+        <text x={cx} y={cy+8} textAnchor="middle" fontSize="7" fill="var(--text2)">{data[0]?.label}</text>
+      </svg>
+      <div className="donut-legend">
+        {segments.map((s,i) => (
+          <div key={i} className="donut-item">
+            <div className="donut-dot" style={{background:s.color}}/>
+            <div className="donut-lbl">{s.label}</div>
+            <div className="donut-pct">{Math.round(s.pct*100)}%</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── LOGIN ──
+function LoginPage({onLogin}) {
+  const [f,setF]=useState({telephone:"",password:""});
+  const [loading,setLoading]=useState(false), [err,setErr]=useState("");
+
+  const login = async () => {
+    setErr(""); setLoading(true);
+    try {
+      const d = await api("/auth/connexion", {method:"POST", body:JSON.stringify({telephone:f.telephone,password:f.password})});
+      if (!d.utilisateur?.is_admin) throw new Error("Accès réservé aux administrateurs");
+      T.set(d.access_token); T.setR(d.refresh_token); T.setU(d.utilisateur);
+      onLogin(d.utilisateur);
+    } catch(e) { setErr(e.message); }
+    finally { setLoading(false); }
+  };
+
+  return (
+    <div style={{minHeight:"100vh",background:`linear-gradient(160deg,var(--g1),var(--g2))`,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+      <div style={{background:"white",borderRadius:24,padding:40,width:"100%",maxWidth:420,boxShadow:"0 20px 60px rgba(0,0,0,.25)"}}>
+        <div style={{textAlign:"center",marginBottom:32}}>
+          <div style={{width:64,height:64,background:"linear-gradient(135deg,var(--g2),var(--g4))",borderRadius:18,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,margin:"0 auto 16px"}}>📈</div>
+          <div style={{fontFamily:"Poppins",fontWeight:800,fontSize:22,color:"var(--g2)"}}>E-épargne Admin</div>
+          <div style={{fontSize:13,color:"var(--text2)",marginTop:4}}>Espace réservé aux administrateurs</div>
+        </div>
+        <div className="fg"><label>Téléphone administrateur</label><input placeholder="+225 07 XX XX XX" type="tel" value={f.telephone} onChange={e=>setF(x=>({...x,telephone:e.target.value}))}/></div>
+        <div className="fg"><label>Mot de passe</label><input placeholder="••••••••" type="password" value={f.password} onChange={e=>setF(x=>({...x,password:e.target.value}))}/></div>
+        {err&&<div style={{color:"var(--red)",fontSize:13,marginBottom:12}}>{err}</div>}
+        <button className="btn btn-green" style={{width:"100%",padding:"13px",fontSize:15}} disabled={loading} onClick={login}>
+          {loading?<span className="spinner"/>:"🔐 Connexion administrateur"}
+        </button>
+        <div style={{textAlign:"center",fontSize:12,color:"var(--text2)",marginTop:16}}>🔒 Accès sécurisé — JWT + chiffrement</div>
+      </div>
+    </div>
+  );
+}
+
+// ── DASHBOARD ──
+function DashboardPage() {
+  const {data:stats,loading,refetch} = useAPI(()=>api("/admin/dashboard"));
+  const {show,comp} = useToast();
+
+  const mois = stats?.cotisations_par_mois || [];
+  const chartData = mois.map(m=>({label:m.periode?.slice(5)||"",val:m.total||0,color:"g"}));
+  const lineData = mois.map(m=>m.total||0);
+
+  return (
+    <div>
+      {comp}
+      {loading ? (
+        <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:300,gap:12,color:"var(--text2)"}}>
+          <span className="spinner"/><span style={{fontWeight:600}}>Chargement des données...</span>
+        </div>
+      ) : stats ? (
+        <>
+          {/* Stats row */}
+          <div className="stats-row">
+            {[
+              {ic:"👥",label:"Membres inscrits",val:stats.membres?.total?.toLocaleString("fr-FR")||"—",sub:`${stats.membres?.actifs||0} actifs · ${(stats.membres?.total||0)-(stats.membres?.actifs||0)} inactifs`,cl:"",icCl:"green",trend:"+12%"},
+              {ic:"💰",label:"Épargne totale",val:`${((stats.finances?.total_epargne||0)/1000000).toFixed(1)}M F`,sub:`Net: ${((stats.finances?.total_epargne||0)/1000000).toFixed(2)}M FCFA`,cl:"",icCl:"blue",trend:"+8.4%"},
+              {ic:"📋",label:"Commissions collectées",val:`${((stats.finances?.total_commissions||0)/1000).toFixed(0)}K F`,sub:"Taux 1% sur cotisations",cl:"orange",icCl:"orange",trend:"+8.4%"},
+              {ic:"🏦",label:"Prêts en cours",val:`${((stats.finances?.encours_prets||0)/1000).toFixed(0)}K F`,sub:`${stats.prets?.en_cours||0} actifs · ${stats.prets?.rembourses||0} remboursés`,cl:"teal",icCl:"teal",trend:""},
+            ].map((s,i)=>(
+              <div key={i} className={`stat-card${s.cl?" "+s.cl:""}`}>
+                <div className="sc-header">
+                  <div className={`sc-icon ${s.icCl}`}>{s.ic}</div>
+                  {s.trend&&<div className="sc-trend up">↑ {s.trend}</div>}
+                </div>
+                <div className="sc-val">{s.val}</div>
+                <div className="sc-label">{s.label}</div>
+                <div className="sc-sub">{s.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Charts row */}
+          <div className="charts-row">
+            <div className="card">
+              <div className="card-header">
+                <div className="card-title">📊 Cotisations mensuelles (FCFA)</div>
+                <div className="card-actions">
+                  <button className="chip active">6 mois</button>
+                  <button className="chip">1 an</button>
+                </div>
+              </div>
+              {chartData.length > 0 ? <BarChart data={chartData}/> : <div style={{textAlign:"center",padding:30,color:"var(--text2)"}}>Aucune donnée</div>}
+              <div style={{marginTop:12}}>
+                <LineChart data={lineData} h={60}/>
+              </div>
+            </div>
+            <div className="card">
+              <div className="card-header"><div className="card-title">💳 Modes de paiement</div></div>
+              <DonutChart data={[
+                {label:"Wave",val:45,color:"#1565C0"},
+                {label:"Orange Money",val:30,color:"#E07B12"},
+                {label:"MTN MoMo",val:18,color:"#F5C518"},
+                {label:"Stripe",val:7,color:"#6C63FF"},
+              ]}/>
+              <div style={{marginTop:16,padding:"12px",background:"var(--gbg)",borderRadius:10}}>
+                <div style={{fontSize:12,color:"var(--text2)",fontWeight:600}}>Total transactions</div>
+                <div style={{fontFamily:"Poppins",fontWeight:800,fontSize:20,color:"var(--g2)"}}>{stats.paiements_recents?.length||0}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* KPIs */}
+          <div className="kpi-row">
+            <div className="kpi"><div className="kpi-ic">🏘️</div><div><div className="kpi-val">{stats.groupes?.total||0}</div><div className="kpi-lbl">Groupes total · {stats.groupes?.actifs||0} actifs</div></div></div>
+            <div className="kpi"><div className="kpi-ic">🎁</div><div><div className="kpi-val">{((stats.finances?.total_bonus_verses||0)/1000).toFixed(1)}K F</div><div className="kpi-lbl">Bonus parrainage versés</div></div></div>
+            <div className="kpi"><div className="kpi-ic">✅</div><div><div className="kpi-val">{stats.prets?.rembourses||0}</div><div className="kpi-lbl">Prêts remboursés</div></div></div>
+          </div>
+
+          {/* Recent payments + Activity */}
+          <div className="two-col">
+            <div className="card">
+              <div className="card-header">
+                <div className="card-title">💳 Paiements récents</div>
+                <button className="btn btn-grey btn-sm" onClick={async()=>{try{const b=await api("/admin/export/paiements");const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download="paiements.csv";a.click()}catch(e){show(e.message,"err")}}}>📥 CSV</button>
+              </div>
+              {(stats.paiements_recents||[]).map((p,i)=>(
+                <div key={i} className="member-card">
+                  <div className="mc-av" style={{borderRadius:10,background:p.type_paiement==="cotisation"?"linear-gradient(135deg,var(--g2),var(--g4))":"linear-gradient(135deg,var(--or),var(--or2))"}}>{p.type_paiement==="cotisation"?"💰":"🏦"}</div>
+                  <div className="mc-info">
+                    <div className="mc-name">{p.type_paiement} · {p.mode_paiement}</div>
+                    <div className="mc-sub">Membre #{p.user_id} · {p.periode||"—"}</div>
+                  </div>
+                  <div className="mc-amount">
+                    <div className="mc-val">+{parseFloat(p.montant_brut||0).toLocaleString("fr-FR")} F</div>
+                    <div className="mc-date"><span className="status-pill sp-green">{p.statut}</span></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="card">
+              <div className="card-header"><div className="card-title">🔔 Activité en temps réel</div></div>
+              {[
+                {ic:"g",t:"Nouveau membre inscrit",sub:"Aicha Diallo · +225 07 XX XX XX",tm:"Il y a 2 min"},
+                {ic:"b",t:"Cotisation confirmée · Wave",sub:"10 000 FCFA · Groupe Abidjan AVEC",tm:"Il y a 5 min"},
+                {ic:"o",t:"Demande de prêt soumise",sub:"50 000 FCFA · Club Yopougon",tm:"Il y a 12 min"},
+                {ic:"g",t:"Bonus parrainage calculé",sub:"200 FCFA versé à Moussa T.",tm:"Il y a 18 min"},
+                {ic:"b",t:"Groupe créé",sub:"Tontine Koumassi · 15 membres max",tm:"Il y a 25 min"},
+                {ic:"o",t:"Remboursement reçu",sub:"25 000 FCFA · Prêt #247",tm:"Il y a 31 min"},
+              ].map((f,i)=>(
+                <div key={i} className="feed-item">
+                  <div className={`feed-dot ${f.ic}`}/>
+                  <div className="feed-text"><div style={{fontWeight:600,fontSize:13}}>{f.t}</div><div style={{fontSize:11,color:"var(--text2)",marginTop:2}}>{f.sub}</div></div>
+                  <div className="feed-time">{f.tm}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Actions rapides admin */}
+          <div className="card mb24">
+            <div className="card-header"><div className="card-title">⚡ Actions rapides</div></div>
+            <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+              <button className="btn btn-green" onClick={async()=>{try{const r=await api("/admin/bonus/verser",{method:"PUT"});show(r.message)}catch(e){show(e.message,"err")}}}>💸 Verser tous les bonus</button>
+              <button className="btn btn-grey" onClick={async()=>{try{const b=await api("/admin/export/membres");const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download="membres.csv";a.click()}catch(e){show(e.message,"err")}}}>📥 Export membres CSV</button>
+              <button className="btn btn-grey" onClick={async()=>{try{const b=await api("/admin/export/paiements");const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download="paiements.csv";a.click()}catch(e){show(e.message,"err")}}}>📥 Export paiements CSV</button>
+              <button className="btn btn-or" onClick={()=>show("Rapport PDF en cours de génération...")}>📊 Générer rapport PDF</button>
+              <button className="btn btn-grey" onClick={refetch}>🔄 Actualiser</button>
+            </div>
+          </div>
+        </>
+      ) : <div style={{textAlign:"center",padding:40,color:"var(--text2)"}}>⚠️ Impossible de charger les données. Vérifiez la connexion au backend.</div>}
+    </div>
+  );
+}
+
+// ── MEMBRES ──
+function MembresPage() {
+  const [search,setSearch]=useState(""), [page,setPage]=useState(1);
+  const {data,loading,refetch} = useAPI(()=>api(`/admin/membres?page=${page}&par_page=20&q=${search}`),[page,search]);
+  const {show,comp} = useToast();
+
+  const changerStatut = async (id, actuel) => {
+    try { await api(`/admin/membres/${id}/statut`,{method:"PUT",body:JSON.stringify({is_active:!actuel})}); show("Statut mis à jour !"); refetch(); }
+    catch(e) { show(e.message,"err"); }
+  };
+
+  return (
+    <div>
+      {comp}
+      <div className="card mb24">
+        <div className="card-header">
+          <div className="card-title">👥 Gestion des membres ({data?.total||0})</div>
+          <div style={{display:"flex",gap:8}}>
+            <input style={{padding:"8px 14px",border:"1px solid var(--border)",borderRadius:10,fontFamily:"Nunito",fontSize:13,width:250,outline:"none"}} placeholder="🔍 Rechercher..." value={search} onChange={e=>setSearch(e.target.value)}/>
+            <button className="btn btn-grey btn-sm" onClick={async()=>{try{const b=await api("/admin/export/membres");const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download="membres.csv";a.click()}catch(e){show(e.message,"err")}}}>📥 CSV</button>
+          </div>
+        </div>
+        {loading ? <div style={{textAlign:"center",padding:30}}><span className="spinner"/></div> : (
+          <div className="table-wrap">
+            <table>
+              <thead><tr><th>Membre</th><th>Téléphone</th><th>Email</th><th>Code Parrainage</th><th>Statut</th><th>Inscription</th><th>Actions</th></tr></thead>
+              <tbody>
+                {(data?.membres||[]).map((m,i)=>(
+                  <tr key={i}>
+                    <td><div style={{display:"flex",alignItems:"center",gap:10}}><div className="td-avatar">{((m.prenom||"?")[0]+(m.nom||"?")[0]).toUpperCase()}</div><div><div className="td-bold">{m.prenom} {m.nom}</div><div className="td-muted">{m.is_admin?"🔑 Admin":"👤 Membre"}</div></div></div></td>
+                    <td className="td-bold">{m.telephone}</td>
+                    <td className="td-muted">{m.email||"—"}</td>
+                    <td><code style={{background:"var(--glt)",padding:"2px 8px",borderRadius:6,fontSize:12,fontWeight:700,color:"var(--g2)"}}>{m.code_parrainage}</code></td>
+                    <td><span className={`status-pill ${m.is_active?"sp-green":"sp-amber"}`}>{m.is_active?"✓ Actif":"En attente"}</span></td>
+                    <td className="td-muted">{new Date(m.created_at).toLocaleDateString("fr-FR")}</td>
+                    <td>
+                      <div style={{display:"flex",gap:6}}>
+                        <button className="btn btn-sm" style={{background:"var(--bluelt)",color:"var(--blue)"}}>👁 Voir</button>
+                        <button className="btn btn-sm" style={{background:m.is_active?"var(--redlt)":"var(--glt)",color:m.is_active?"var(--red)":"var(--g2)"}} onClick={()=>changerStatut(m.id,m.is_active)}>{m.is_active?"Suspendre":"Activer"}</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:16,paddingTop:12,borderTop:"1px solid var(--gbg)"}}>
+          <div className="text-muted text-sm">Page {page} / {data?.pages||1} · {data?.total||0} membres</div>
+          <div style={{display:"flex",gap:6}}>
+            <button className="btn btn-grey btn-sm" disabled={page<=1} onClick={()=>setPage(p=>p-1)}>← Précédent</button>
+            <button className="btn btn-grey btn-sm" disabled={page>=(data?.pages||1)} onClick={()=>setPage(p=>p+1)}>Suivant →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── PAIEMENTS ──
+function PaiementsPage() {
+  const [page,setPage]=useState(1), [statut,setStatut]=useState("");
+  const {data,loading,refetch} = useAPI(()=>api(`/admin/paiements?page=${page}&statut=${statut}`),[page,statut]);
+  const {show,comp} = useToast();
+
+  const confirmer = async (id) => {
+    try { await api(`/payments/${id}/confirmer`,{method:"PUT"}); show("Paiement confirmé !"); refetch(); }
+    catch(e) { show(e.message,"err"); }
+  };
+
+  return (
+    <div>
+      {comp}
+      <div className="stats-row" style={{gridTemplateColumns:"repeat(3,1fr)"}}>
+        {[
+          {ic:"✅",l:"Confirmés",v:data?.paiements?.filter(p=>p.statut==="confirmé").length||"—",cl:""},
+          {ic:"⏳",l:"En attente",v:data?.paiements?.filter(p=>p.statut==="en_attente").length||"—",cl:"orange"},
+          {ic:"❌",l:"Échoués",v:data?.paiements?.filter(p=>p.statut==="échoué").length||"—",cl:"red"},
+        ].map((s,i)=>(
+          <div key={i} className={`stat-card${s.cl?" "+s.cl:""}`}>
+            <div className="sc-header"><div className={`sc-icon ${["green","orange","red"][i]}`}>{s.ic}</div></div>
+            <div className="sc-val">{s.v}</div>
+            <div className="sc-label">{s.l}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <div className="card-title">💳 Tous les paiements ({data?.total||0})</div>
+          <div style={{display:"flex",gap:6}}>
+            {["","confirmé","en_attente","échoué"].map(s=>(
+              <button key={s} className={`chip${statut===s?" active":""}`} onClick={()=>setStatut(s)}>{s||"Tous"}</button>
+            ))}
+          </div>
+        </div>
+        {loading?<div style={{textAlign:"center",padding:30}}><span className="spinner"/></div>:(
+          <div className="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Membre</th><th>Groupe</th><th>Montant</th><th>Commission</th><th>Mode</th><th>Type</th><th>Statut</th><th>Date</th><th>Action</th></tr></thead>
+              <tbody>
+                {(data?.paiements||[]).map((p,i)=>(
+                  <tr key={i}>
+                    <td className="td-muted">#{p.id}</td>
+                    <td className="td-bold">Membre #{p.user_id}</td>
+                    <td className="td-muted">{p.groupe_id?"Grp #"+p.groupe_id:"—"}</td>
+                    <td style={{fontFamily:"Poppins",fontWeight:700,color:"var(--g2)"}}>{parseFloat(p.montant_brut||0).toLocaleString("fr-FR")} F</td>
+                    <td style={{color:"var(--or)",fontWeight:600}}>{parseFloat(p.commission||0).toLocaleString("fr-FR")} F</td>
+                    <td><span className="td-bold">{p.mode_paiement}</span></td>
+                    <td className="td-muted">{p.type_paiement}</td>
+                    <td><span className={`status-pill ${p.statut==="confirmé"?"sp-green":p.statut==="en_attente"?"sp-amber":"sp-red"}`}>{p.statut}</span></td>
+                    <td className="td-muted">{new Date(p.created_at).toLocaleDateString("fr-FR")}</td>
+                    <td>{p.statut==="en_attente"&&<button className="btn btn-sm btn-green" onClick={()=>confirmer(p.id)}>✓ Confirmer</button>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:16,paddingTop:12,borderTop:"1px solid var(--gbg)"}}>
+          <div className="text-muted text-sm">Page {page}/{data?.pages||1}</div>
+          <div style={{display:"flex",gap:6}}>
+            <button className="btn btn-grey btn-sm" disabled={page<=1} onClick={()=>setPage(p=>p-1)}>← Précédent</button>
+            <button className="btn btn-grey btn-sm" disabled={page>=(data?.pages||1)} onClick={()=>setPage(p=>p+1)}>Suivant →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── PARRAINAGE ──
+function ParrainagePage() {
+  const {show,comp} = useToast();
+
+  const verser = async () => {
+    try { const r = await api("/admin/bonus/verser",{method:"PUT"}); show(r.message); }
+    catch(e) { show(e.message,"err"); }
+  };
+
+  return (
+    <div>
+      {comp}
+      <div className="three-col">
+        {[
+          {ic:"🤝",l:"Parrains actifs",v:"1 250",cl:""},
+          {ic:"👥",l:"Filleuls inscrits",v:"3 780",cl:""},
+          {ic:"💰",l:"Bonus en attente",v:"24 600 F",cl:"gold"},
+        ].map((s,i)=>(
+          <div key={i} className={`stat-card${s.cl?" "+s.cl:""}`}>
+            <div className="sc-header"><div className={`sc-icon ${["green","blue","gold"][i]}`}>{s.ic}</div></div>
+            <div className="sc-val">{s.v}</div>
+            <div className="sc-label">{s.l}</div>
+          </div>
+        ))}
+      </div>
+      <div className="card">
+        <div className="card-header"><div className="card-title">🎁 Gestion des bonus parrainage</div></div>
+        <div style={{display:"flex",gap:12,marginBottom:20,padding:"16px",background:"linear-gradient(135deg,var(--glt),#F0FAF0)",borderRadius:12,border:"1px solid var(--g4)"}}>
+          <div style={{flex:1}}>
+            <div style={{fontFamily:"Poppins",fontWeight:700,fontSize:15,marginBottom:4}}>Bonus en attente de versement</div>
+            <div style={{fontFamily:"Poppins",fontWeight:800,fontSize:28,color:"var(--or)"}}>24 600 FCFA</div>
+            <div style={{fontSize:12,color:"var(--text2)",marginTop:4}}>Pour 47 parrains · Taux : 2% par cotisation</div>
+          </div>
+          <button className="btn btn-or" style={{padding:"14px 28px",fontSize:15}} onClick={verser}>💸 Verser tous les bonus</button>
+        </div>
+        <div className="table-wrap">
+          <table>
+            <thead><tr><th>Parrain</th><th>Filleuls</th><th>Bonus en attente</th><th>Bonus versé total</th><th>Statut</th><th>Action</th></tr></thead>
+            <tbody>
+              {[
+                {nom:"Karim Traoré",filleuls:15,attente:5400,verse:12400},
+                {nom:"Aminata Koné",filleuls:8,attente:2400,verse:6800},
+                {nom:"Moussa Diallo",filleuls:12,attente:3600,verse:9200},
+                {nom:"Fatoumata Bamba",filleuls:6,attente:1800,verse:4400},
+                {nom:"Ibrahim Koné",filleuls:3,attente:900,verse:2100},
+              ].map((p,i)=>(
+                <tr key={i}>
+                  <td><div style={{display:"flex",alignItems:"center",gap:10}}><div className="td-avatar">{(p.nom[0]+p.nom.split(" ")[1][0]).toUpperCase()}</div><div className="td-bold">{p.nom}</div></div></td>
+                  <td className="td-bold">{p.filleuls}</td>
+                  <td style={{fontWeight:700,color:"var(--or)"}}>{p.attente.toLocaleString("fr-FR")} F</td>
+                  <td style={{fontWeight:700,color:"var(--g2)"}}>{p.verse.toLocaleString("fr-FR")} F</td>
+                  <td><span className="status-pill sp-amber">En attente</span></td>
+                  <td><button className="btn btn-sm btn-green" onClick={()=>show(`Bonus versé à ${p.nom} !`)}>💸 Verser</button></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── NOTIFICATIONS ──
+function NotifPage() {
+  const [titre,setTitre]=useState(""), [message,setMessage]=useState(""), [type,setType]=useState("info");
+  const [sending,setSending]=useState(false);
+  const {show,comp} = useToast();
+
+  const envoyer = async () => {
+    if (!titre||!message) { show("Titre et message requis","err"); return; }
+    setSending(true);
+    try { const r = await api("/admin/notifier-tous",{method:"POST",body:JSON.stringify({titre,message,type_notif:type})}); show(r.message); setTitre(""); setMessage(""); }
+    catch(e) { show(e.message,"err"); }
+    finally { setSending(false); }
+  };
+
+  return (
+    <div>
+      {comp}
+      <div className="two-col">
+        <div className="card">
+          <div className="card-header"><div className="card-title">📢 Envoyer une notification à tous</div></div>
+          <div className="fg"><label>Titre *</label><input placeholder="Ex: Rappel de cotisation" value={titre} onChange={e=>setTitre(e.target.value)}/></div>
+          <div className="fg"><label>Message *</label><textarea rows={4} placeholder="Votre message pour tous les membres..." value={message} onChange={e=>setMessage(e.target.value)} style={{resize:"vertical"}}/></div>
+          <div className="fg"><label>Type</label>
+            <select value={type} onChange={e=>setType(e.target.value)}>
+              <option value="info">ℹ️ Information</option>
+              <option value="paiement">💳 Paiement</option>
+              <option value="pret">🏦 Prêt</option>
+              <option value="parrainage">🎁 Parrainage</option>
+              <option value="alerte">⚠️ Alerte</option>
+            </select>
+          </div>
+          <button className="btn btn-green" style={{width:"100%",padding:"12px"}} disabled={sending} onClick={envoyer}>{sending?<span className="spinner"/>:"📢 Envoyer à tous les membres"}</button>
+        </div>
+        <div className="card">
+          <div className="card-header"><div className="card-title">📋 Dernières notifications envoyées</div></div>
+          {[
+            {t:"Rappel cotisation Mars 2026",m:"N'oubliez pas de payer votre part...",date:"26 Mars 2026",nb:287},
+            {t:"Nouveau bonus parrainage",m:"Les bonus du mois ont été versés !",date:"20 Mars 2026",nb:312},
+            {t:"Maintenance planifiée",m:"Le service sera indisponible ce soir...",date:"15 Mars 2026",nb:312},
+          ].map((n,i)=>(
+            <div key={i} style={{padding:"12px 0",borderBottom:"1px solid var(--gbg)"}}>
+              <div style={{fontWeight:700,fontSize:13,marginBottom:3}}>{n.t}</div>
+              <div style={{fontSize:12,color:"var(--text2)",marginBottom:5}}>{n.m}</div>
+              <div style={{display:"flex",gap:8,fontSize:11}}>
+                <span style={{color:"var(--g2)",fontWeight:600}}>✓ {n.nb} reçus</span>
+                <span style={{color:"var(--text2)"}}>· {n.date}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── CONFIG ──
+function ConfigPage() {
+  const [cfg,setCfg]=useState({commission:1,parrainage_bonus:2,admin_wave:"",admin_orange:"",admin_mtn:""});
+  const {show,comp} = useToast();
+
+  return (
+    <div>
+      {comp}
+      <div className="two-col">
+        <div className="card">
+          <div className="card-header"><div className="card-title">⚙️ Paramètres financiers</div></div>
+          <div className="fg"><label>Taux de commission (%)</label><input type="number" value={cfg.commission} onChange={e=>setCfg(x=>({...x,commission:e.target.value}))} min="0" max="10" step="0.5"/></div>
+          <div style={{background:"var(--glt)",borderRadius:10,padding:12,marginBottom:16,fontSize:12,color:"var(--g2)",fontWeight:600}}>
+            Exemple: Part de 5 000 F → Commission = {Math.round(5000*cfg.commission/100)} F → Net = {(5000-Math.round(5000*cfg.commission/100)).toLocaleString("fr-FR")} F
+          </div>
+          <div className="fg"><label>Taux bonus parrainage (%)</label><input type="number" value={cfg.parrainage_bonus} onChange={e=>setCfg(x=>({...x,parrainage_bonus:e.target.value}))} min="0" max="10" step="0.5"/></div>
+          <button className="btn btn-green" style={{width:"100%"}} onClick={()=>show("Paramètres sauvegardés !")}>💾 Sauvegarder</button>
+        </div>
+        <div className="card">
+          <div className="card-header"><div className="card-title">💳 Comptes admin Mobile Money</div></div>
+          <div className="fg"><label>Numéro Wave admin</label><input placeholder="+225 07 XX XX XX" value={cfg.admin_wave} onChange={e=>setCfg(x=>({...x,admin_wave:e.target.value}))}/></div>
+          <div className="fg"><label>Numéro Orange Money admin</label><input placeholder="+225 07 XX XX XX" value={cfg.admin_orange} onChange={e=>setCfg(x=>({...x,admin_orange:e.target.value}))}/></div>
+          <div className="fg"><label>Numéro MTN MoMo admin</label><input placeholder="+225 07 XX XX XX" value={cfg.admin_mtn} onChange={e=>setCfg(x=>({...x,admin_mtn:e.target.value}))}/></div>
+          <div className="notif-box warn"><span>⚠️</span><span style={{fontSize:12}}>Les commissions sont reversées automatiquement sur ces comptes lors de chaque paiement confirmé.</span></div>
+          <button className="btn btn-green" style={{width:"100%"}} onClick={()=>show("Comptes mis à jour !")}>💾 Sauvegarder</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── APP ──
+function App() {
+  const [user,setUser]=useState(()=>T.getU());
+  const [page,setPage]=useState("dashboard");
+
+  const isLoggedIn = !!user && !!T.get();
+
+  if (!isLoggedIn) return <LoginPage onLogin={u=>setUser(u)}/>;
+
+  const PAGES = {
+    dashboard: {title:"Tableau de bord", comp:<DashboardPage/>},
+    analytics: {title:"Analyses & Rapports", comp:<DashboardPage/>},
+    membres: {title:"Gestion des membres", comp:<MembresPage/>},
+    paiements: {title:"Paiements & Transactions", comp:<PaiementsPage/>},
+    parrainage: {title:"Parrainages & Bonus", comp:<ParrainagePage/>},
+    notifications: {title:"Envoyer des notifications", comp:<NotifPage/>},
+    config: {title:"Configuration", comp:<ConfigPage/>},
+    groupes: {title:"Groupes AVEC/AUEC", comp:<DashboardPage/>},
+    prets: {title:"Prêts & Remboursements", comp:<DashboardPage/>},
+  };
+
+  const current = PAGES[page] || PAGES.dashboard;
+
+  return (
+    <div className="admin-layout">
+      {/* SIDEBAR */}
+      <div className="sidebar">
+        <div className="sb-logo">
+          <div className="sb-logo-inner">
+            <div className="sb-logo-icon">📈</div>
+            <div>
+              <div className="sb-logo-text">E-épargne</div>
+              <div className="sb-logo-sub">AUEC / AVEC</div>
+            </div>
+          </div>
+          <div className="sb-badge">⚙️ Admin</div>
+        </div>
+
+        {NAV.map(section=>(
+          <div key={section.section}>
+            <div className="sb-section">{section.section}</div>
+            {section.items.map(item=>(
+              <button key={item.k} className={`sb-item${page===item.k?" active":""}`} onClick={()=>setPage(item.k)}>
+                <span className="sb-ic">{item.ic}</span>
+                <span>{item.l}</span>
+                {item.badge!=null&&<span className="sb-badge-ct">{item.badge||""}</span>}
+              </button>
+            ))}
+          </div>
+        ))}
+
+        <div className="sb-bottom">
+          <button className="sb-item" onClick={()=>{T.clear();setUser(null)}}>
+            <span className="sb-ic">🚪</span><span>Déconnexion</span>
+          </button>
+          <div style={{padding:"12px 16px",fontSize:11,color:"rgba(255,255,255,.3)"}}>
+            {user?.prenom} {user?.nom}<br/>Administrateur E-épargne
+          </div>
+        </div>
+      </div>
+
+      {/* MAIN */}
+      <div className="main">
+        <div className="topbar">
+          <div className="topbar-left">
+            <div className="page-title">{current.title}</div>
+          </div>
+          <div className="topbar-right">
+            <div className="search-box"><span>🔍</span><input placeholder="Rechercher un membre, groupe..."/></div>
+            <div className="tb-notif">🔔<div className="tb-notif-dot"/></div>
+            <div className="tb-avatar">{((user?.prenom||"A")[0]+(user?.nom||"D")[0]).toUpperCase()}</div>
+          </div>
+        </div>
+        <div className="content">
+          {current.comp}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<App/>, document.getElementById("root"));
+</script>
+</body>
+</html>
